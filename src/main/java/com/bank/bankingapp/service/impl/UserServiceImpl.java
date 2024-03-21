@@ -7,9 +7,8 @@ import com.bank.bankingapp.repository.UserRepository;
 import com.bank.bankingapp.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -40,7 +39,7 @@ public class UserServiceImpl implements UserService {
                 .address(userRequest.getAddress())
                 .stateOfOrigin(userRequest.getStateOfOrigin())
                 .accountNumber(AccountUtils.generateAccountNumber())
-                .accountBalance(BigDecimal.ZERO)
+                .accountBalance(userRequest.getAccountBalance())
                 .email(userRequest.getEmail())
                 .phoneNumber(userRequest.getPhoneNumber())
                 .alternativePhoneNumber(userRequest.getAlternativePhoneNumber())
@@ -95,13 +94,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String nameEnquiry(EnquiryRequest request) {
+    public User nameEnquiry(EnquiryRequest request) {
         boolean isAccountExist = userRepository.existsByAccountNumber(request.getAccountNumber());
         if (!isAccountExist){
-            return AccountUtils.ACCOUNT_NOT_EXIST_MESSAGE;
+            return null;
         }
-        User foundUser = userRepository.findByAccountNumber(request.getAccountNumber());
-        return foundUser.getFirstName() + " " + foundUser.getLastName() + " " + foundUser.getOtherName();
+        return userRepository.findByAccountNumber(request.getAccountNumber());
     }
 
     @Override
@@ -115,7 +113,6 @@ public class UserServiceImpl implements UserService {
                     .accountInfo(null)
                     .build();
         }
-
         User userToCredit = userRepository.findByAccountNumber(request.getAccountNumber());
         userToCredit.setAccountBalance(userToCredit.getAccountBalance().add(request.getAmount()));
         userRepository.save(userToCredit);
@@ -128,6 +125,7 @@ public class UserServiceImpl implements UserService {
                 .amount(request.getAmount())
                 .build();
         transactionService.saveTransaction(transactionDto);
+
 
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_CREDITED_SUCCESS)
@@ -247,6 +245,39 @@ public class UserServiceImpl implements UserService {
                 .responseMessage(AccountUtils.TRANSFER_SUCCESSFUL_MESSAGE)
                 .accountInfo(null)
                 .build();
+    }
+
+    @Override
+    public BankResponse deleteUser(DeleteRequest request) {
+        userRepository.deleteByAccountNumber(request.getAccountNumber());
+
+            return BankResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_DELETED_SUCCESS)
+                    .responseMessage(AccountUtils.ACCOUNT_DELETE_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+    }
+
+    @Override
+    public BankResponse updateUser(UpdateRequest request) {
+        User foundUser = userRepository.findByAccountNumber(request.getAccountNumber());
+        if(foundUser!=null) {
+            foundUser.setEmail(request.getEmail());
+            foundUser.setFirstName(request.getFirstName());
+            foundUser.setLastName(request.getLastName());
+            userRepository.save(foundUser);
+        }
+        return BankResponse.builder()
+                .responseCode(AccountUtils.ACCOUNT_UPDATED_SUCCESS)
+                .responseMessage(AccountUtils.ACCOUNT_UPDATED_MESSAGE)
+                .accountInfo(null)
+                .build();
+    }
+
+
+    @Override
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 
 

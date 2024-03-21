@@ -1,12 +1,15 @@
 package com.bank.bankingapp.controller;
 
 import com.bank.bankingapp.dto.*;
+import com.bank.bankingapp.entity.User;
 import com.bank.bankingapp.service.impl.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
     @RequestMapping("/api/user")
@@ -40,19 +43,38 @@ public class UserController {
             return userService.balanceEnquiry(request);
         }
         @GetMapping("nameEnquiry")
-    public String nameEnquiry(@RequestBody EnquiryRequest request){
+    public User nameEnquiry(@ModelAttribute EnquiryRequest request){
             return userService.nameEnquiry(request);
         }
+
         @PostMapping("credit")
     public BankResponse creditAccount(@RequestBody CreditDebitRequest request){
             return userService.creditAccount(request);
         }
-        @PostMapping("debit")
+
+    @PostMapping(value = "delete")
+    public BankResponse deleteAccount(@RequestBody DeleteRequest request){
+        return userService.deleteUser(request);
+    }
+
+    @PostMapping(value = "update")
+    public BankResponse updateAccount(@RequestBody UpdateRequest request){
+        return userService.updateUser(request);
+    }
+
+    @PostMapping("debit")
     public BankResponse debitAccount(@RequestBody CreditDebitRequest request){
             return userService.debitAccount(request);
-        }
-        @PostMapping("transfer")
+    }
+
+    @PostMapping("transfer")
     public BankResponse transfer(@RequestBody TransferRequest request){
             return userService.transfer(request);
         }
+
+    @GetMapping("getUsers")
+    public List<User> getUsers(){
+        return userService.getUsers();
+    }
+
 }

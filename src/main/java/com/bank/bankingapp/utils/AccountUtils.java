@@ -19,6 +19,15 @@ public class AccountUtils {
     public static final String ACCOUNT_DEBITED_MESSAGE = "Account has been successfully debited";
     public static final String TRANSFER_SUCCESSFUL_CODE = "008";
     public static final String TRANSFER_SUCCESSFUL_MESSAGE = "Transfer Successful";
+    public static final String ACCOUNT_DELETED_SUCCESS = "009";
+    public static final String ACCOUNT_DELETE_MESSAGE = "Account Deleted Successfully";
+    public static final String ACCOUNT_DELETED_FAIL = "010";
+    public static final String ACCOUNT_DELETE_FAILED_MESSAGE = "Account Deletion Failed";
+
+    public static final String ACCOUNT_UPDATED_SUCCESS = "011";
+    public static final String ACCOUNT_UPDATED_MESSAGE = "Account Updated Successfully";
+    public static final String ACCOUNT_UPDATED_FAIL = "012";
+    public static final String ACCOUNT_UPDATED_FAILED_MESSAGE = "Account Update Failed";
 
     public static String generateAccountNumber(){
         /*2023 + random Six Digits*/
